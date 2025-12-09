@@ -1,1 +1,2 @@
 qa_params/* filter=lfs diff=lfs merge=lfs -text
+models/qwen2.5_1.5b_dapt_adapter_bf16/* filter=lfs diff=lfs merge=lfs -text
