@@ -11,7 +11,7 @@
 - `code/fine_tuing_fix2.py`: QA Instruction Fine-Tuning 코드(ROUGE 평가 포함). `BASE_PATH`, 데이터/출력 경로, `LORA_PATH`를 환경에 맞게 수정 필요.
 - `code/qwen_simgleturn_ver2.py`: 싱글턴 QA 테스트 스크립트. `BASE_PATH`, `ADAPTER_PATH`를 로컬 어댑터 경로(예: `qa_params/` 또는 `models/...dapt_adapter_bf16/`)로 바꿔 사용.
 - `dataset/`: DAPT·QA 학습/검증 코퍼스(`train_law_corpus_dapt_fully_cleaned.jsonl`, `train_instruction_corpus.jsonl`, `valid_law_corpus_dapt_fully_cleaned.jsonl`, `valid_instruction_corpus.jsonl`).
-- 기타: `.gitattributes`에 LFS 규칙이 포함되어 있으니 clone 전에 `git lfs install`을 실행하세요.
+- 기타: `.gitattributes`에 LFS 규칙이 포함되어 있으니 clone 전에 `git lfs install`을 실행.
 
 ## 학습 파이프라인
 1) **DAPT (Domin-Adaptive Pre-Training)**  
