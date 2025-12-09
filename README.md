@@ -1,0 +1,53 @@
+# Textual-Data-Analysis (행정법 LLM DAPT + QA 파인튜닝)
+
+## 프로젝트 개요
+- 행정법 문서 요약·질의응답을 위해 Qwen 2.5-1.5B Instruct를 도메인 적응 사전학습(DAPT) 후 QA Instruction Fine-Tuning(IFT)으로 이어 학습한 프로젝트입니다. 모든 파인튜닝은 LoRA(Rank 32)로 수행했습니다.
+- 학습·추론 코드는 Colab A100 환경을 기준으로 작성되었으며, 경로는 로컬 환경에 맞게 수정해야 합니다.
+- 최종 보고서는 저장소 상위 경로에 위치한 `../2025학년도 2학기 텍스트 데이터 분석 최종 보고서.pdf`에 있습니다.
+
+## 저장소 구성
+- `models/qwen2.5_1.5b_dapt_adapter_bf16/` (Git LFS): DAPT(법령/해석례/결정례)로 학습한 LoRA 어댑터.
+- `qa_params/` (Git LFS): 위 DAPT 어댑터를 기반으로 QA Instruction Fine-Tuning을 추가한 LoRA 어댑터.
+- `code/Qwen_DAPT_Training.txt`: 도메인 적응 사전학습(DAPT) 코드(Colab 스크립트).
+- `code/fine_tuing_fix2.py`: QA Instruction Fine-Tuning 코드(ROUGE 평가 포함). `BASE_PATH`, 데이터/출력 경로, `LORA_PATH`를 환경에 맞게 수정 필요.
+- `code/qwen_simgleturn_ver2.py`: 싱글턴 QA 테스트 스크립트. `BASE_PATH`, `ADAPTER_PATH`를 로컬 어댑터 경로(예: `qa_params/` 또는 `models/...dapt_adapter_bf16/`)로 바꿔 사용.
+- `valid_instruction_corpus.jsonl`, `valid_law_corpus_dapt_fully_cleaned.jsonl`: 검증용 코퍼스 샘플.
+- 기타: `.gitattributes`에 LFS 규칙이 포함되어 있으니 clone 전에 `git lfs install`을 실행하세요.
+
+## 학습 파이프라인
+1) **DAPT (Domin-Adaptive Pre-Training)**  
+   - 데이터: AI Hub 법률 데이터셋(법령, 해석례, 결정례).  
+   - 베이스: `Qwen/Qwen2.5-1.5B-Instruct` (BF16, LoRA).  
+   - 출력: `models/qwen2.5_1.5b_dapt_adapter_bf16/`.
+
+2) **QA Instruction Fine-Tuning (IFT)**  
+   - 데이터: 행정법 QA 세트(`dataset/train_instruction_corpus.jsonl`, `valid_instruction_corpus.jsonl` 등; Colab 경로 기준).  
+   - 입력 어댑터: DAPT 결과(`LORA_PATH`).  
+   - 출력: `qa_params/` 어댑터.  
+   - 평가지표: ROUGE-L 0.3893(목표 0.4000 대비 97.3% 달성).
+
+3) **싱글턴 추론 테스트**  
+   - 스크립트: `qwen_simgleturn_ver2.py`.  
+   - 하드코딩된 경로를 로컬 저장소 위치로 변경 후 실행.  
+   - 테스트 질의 목록이 포함되어 있어 환각 여부를 빠르게 점검할 수 있습니다.
+
+## 재현/사용 가이드
+1. 의존성: `pip install transformers peft datasets evaluate rouge_score matplotlib` (Colab에서는 추가로 `google.colab` 드라이브 마운트).  
+2. Git LFS: `git lfs install` 후 clone/pull.  
+3. 경로 설정: 각 스크립트 상단의 `BASE_PATH`, `LORA_PATH`, `ADAPTER_PATH` 등을 현재 저장소 경로에 맞게 수정.  
+4. DAPT 실행: `Qwen_DAPT_Training.ipynb`(또는 `.txt` 변환본)에서 데이터 경로(`dataset/df.jsonl`)와 출력 경로를 맞춘 뒤 학습.  
+5. QA IFT 실행: `fine_tuing_fix2.py`에서 학습/검증 데이터 경로와 `LORA_PATH`(DAPT 어댑터) 설정 후 학습.  
+6. 추론 테스트: `qwen_simgleturn_ver2.py`에서 어댑터 경로를 `qa_params/`로 지정한 뒤 실행하면 내장된 질의 리스트로 응답을 확인할 수 있습니다.
+
+## 결과 요약(보고서 발췌)
+- ROUGE-L 0.3893(목표 0.4000). 문장 구조·어휘 유사성 측면의 정량 성능은 양호.  
+- 정성 평가에서 도메인 QA에 대해 환각(Hallucination) 사례가 발견됨(연관 없는 법률 용어 조합, 부처 명 혼용 등).  
+- 한계 원인: (1) 판결문 데이터 미포함, (2) 소형 sLLM(1.5B) 체급 한계, (3) 지식 부족 구간에서 논리적 추론 부재.
+
+## 향후 보완 아이디어
+- RAG 결합으로 외부 근거를 실시간 참조해 환각 억제.  
+- 판결문 등 법리 추론 데이터 추가 재학습.  
+- 더 큰 모델(≥7B)로 재학습하여 복잡한 행정법 질의 대응력 강화.
+
+## 참고
+- 상세 실험/분석: `../2025학년도 2학기 텍스트 데이터 분석 최종 보고서.pdf`.
