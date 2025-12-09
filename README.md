@@ -10,7 +10,7 @@
 - `code/Qwen_DAPT_Training.py`: 도메인 적응 사전학습(DAPT) 코드(Colab 스크립트).
 - `code/fine_tuing_fix2.py`: QA Instruction Fine-Tuning 코드(ROUGE 평가 포함). `BASE_PATH`, 데이터/출력 경로, `LORA_PATH`를 환경에 맞게 수정 필요.
 - `code/qwen_simgleturn_ver2.py`: 싱글턴 QA 테스트 스크립트. `BASE_PATH`, `ADAPTER_PATH`를 로컬 어댑터 경로(예: `qa_params/` 또는 `models/...dapt_adapter_bf16/`)로 바꿔 사용.
-- `valid_instruction_corpus.jsonl`, `valid_law_corpus_dapt_fully_cleaned.jsonl`: 검증용 코퍼스 샘플.
+- `dataset/`: DAPT·QA 학습/검증 코퍼스(`train_law_corpus_dapt_fully_cleaned.jsonl`, `train_instruction_corpus.jsonl`, `valid_law_corpus_dapt_fully_cleaned.jsonl`, `valid_instruction_corpus.jsonl`).
 - 기타: `.gitattributes`에 LFS 규칙이 포함되어 있으니 clone 전에 `git lfs install`을 실행하세요.
 
 ## 학습 파이프라인
@@ -34,7 +34,7 @@
 1. 의존성: `pip install transformers peft datasets evaluate rouge_score matplotlib` (Colab에서는 추가로 `google.colab` 드라이브 마운트).  
 2. Git LFS: `git lfs install` 후 clone/pull.  
 3. 경로 설정: 각 스크립트 상단의 `BASE_PATH`, `LORA_PATH`, `ADAPTER_PATH` 등을 현재 저장소 경로에 맞게 수정.  
-4. DAPT 실행: `Qwen_DAPT_Training.ipynb`(또는 `.txt` 변환본)에서 데이터 경로(`dataset/df.jsonl`)와 출력 경로를 맞춘 뒤 학습.  
+4. DAPT 실행: `Qwen_DAPT_Training.py`(또는 노트북)에서 데이터 경로(`dataset/train_law_corpus_dapt_fully_cleaned.jsonl`)와 출력 경로를 맞춘 뒤 학습.
 5. QA IFT 실행: `fine_tuing_fix2.py`에서 학습/검증 데이터 경로와 `LORA_PATH`(DAPT 어댑터) 설정 후 학습.  
 6. 추론 테스트: `qwen_simgleturn_ver2.py`에서 어댑터 경로를 `qa_params/`로 지정한 뒤 실행하면 내장된 질의 리스트로 응답을 확인할 수 있습니다.
 
