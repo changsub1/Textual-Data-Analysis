@@ -8,7 +8,7 @@
 ## 저장소 구성
 - `models/qwen2.5_1.5b_dapt_adapter_bf16/` (Git LFS): DAPT(법령/해석례/결정례)로 학습한 LoRA 어댑터.
 - `qa_params/` (Git LFS): 위 DAPT 어댑터를 기반으로 QA Instruction Fine-Tuning을 추가한 LoRA 어댑터.
-- `code/Qwen_DAPT_Training.txt`: 도메인 적응 사전학습(DAPT) 코드(Colab 스크립트).
+- `code/Qwen_DAPT_Training.py`: 도메인 적응 사전학습(DAPT) 코드(Colab 스크립트).
 - `code/fine_tuing_fix2.py`: QA Instruction Fine-Tuning 코드(ROUGE 평가 포함). `BASE_PATH`, 데이터/출력 경로, `LORA_PATH`를 환경에 맞게 수정 필요.
 - `code/qwen_simgleturn_ver2.py`: 싱글턴 QA 테스트 스크립트. `BASE_PATH`, `ADAPTER_PATH`를 로컬 어댑터 경로(예: `qa_params/` 또는 `models/...dapt_adapter_bf16/`)로 바꿔 사용.
 - `valid_instruction_corpus.jsonl`, `valid_law_corpus_dapt_fully_cleaned.jsonl`: 검증용 코퍼스 샘플.
